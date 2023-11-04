@@ -30,7 +30,7 @@ namespace ServerlessFunc
         [JsonInclude]
         [JsonPropertyName("SessionId")] //Unique id for the session conducted
         public string SessionId { get; set; }
-
+         
         /// <summary>
         /// To store the blob name of the submission.
         /// </summary>
@@ -67,6 +67,13 @@ namespace ServerlessFunc
 
         [JsonIgnore]
         public ETag ETag { get; set; }
+    }
+
+    public class SubmissionData
+    {
+        public string SessionId { get; set; }
+        public string UserName { get; set; }
+        public byte[] ZippedDllFiles { get; set; }
     }
 
 }

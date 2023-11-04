@@ -24,11 +24,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ServerlessFunc
 {
-    public class Submission
-    {
-        public byte[] Dll { get; set; }
-        public byte[] Analysis { get; set; }
-    }
+    
     /// <summary>
     /// Custom Azure functions APIs class.
     /// </summary>
