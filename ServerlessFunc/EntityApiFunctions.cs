@@ -22,85 +22,99 @@ using Azure.Storage.Blobs.Models;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
+
 namespace ServerlessFunc
 {
     public static class EntityApi
     {
         private const string SessionTableName = "SessionTable";
         private const string SubmissionTableName = "SubmissionTable";
+        private const string AnalysisTableName = "AnalysisTable";
         private const string ConnectionName = "AzureWebJobsStorage";
         private const string SessionRoute = "session";
         private const string SubmissionRoute = "submission";
         private const string DllContainerName = "dll";
-        private const string AnalysisContainerName = "analysis";
         private const string connectionString = "UseDevelopmentStorage=true";
         private const string AnalysisRoute = "analysis";
 
-        [FunctionName("CreateSession")]
-        public static async Task<IActionResult> CreateSession(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = SessionRoute + "/{hostUserName}")] HttpRequest req,
+        [FunctionName("CreateSessionEntity")]
+        public static async Task<IActionResult> CreateSessionEntity(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = SessionRoute)] HttpRequest req,
         [Table(SessionTableName, Connection = ConnectionName)] IAsyncCollector<SessionEntity> entityTable,
-        string hostUserName)
+        ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var requestData = System.Text.Json.JsonSerializer.Deserialize<SessionRequestData>(requestBody);
-
-            // Extract sessionId and tests from the request data
-            string sessionId = requestData.SessionId;
-            List<string> tests = requestData.Tests;
-
-            SessionEntity value = new SessionEntity(hostUserName, sessionId, tests);
+            SessionData requestData = System.Text.Json.JsonSerializer.Deserialize<SessionData>(requestBody);
+            SessionEntity value = new SessionEntity(requestData);
             await entityTable.AddAsync(value);
             return new OkObjectResult(value);
         }
 
-        [FunctionName("GetSessionsbyUsername")]
-        public static async Task<IActionResult> GetSessionsByUser(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SessionRoute + "/{username}")] HttpRequest req,
-        [Table(SessionTableName, SessionEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
-        string username)
+        [FunctionName("CreateAnalysisEntity")]
+        public static async Task<IActionResult> CreateAnalysisEntity(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = AnalysisRoute)] HttpRequest req,
+        [Table(AnalysisTableName, Connection = ConnectionName)] IAsyncCollector<AnalysisEntity> entityTable,
+        ILogger log)
         {
-       
-            var page = await tableClient.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{username}'").AsPages().FirstAsync();
-          
-            return new OkObjectResult(page.Values);
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            AnalysisData requestData = System.Text.Json.JsonSerializer.Deserialize<AnalysisData>(requestBody);
+            AnalysisEntity value = new AnalysisEntity(requestData);
+            await entityTable.AddAsync(value);
+            return new OkObjectResult(value);
         }
 
-        [FunctionName("CreateSubmission")]
-        public static async Task<IActionResult> CreateSubmission(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = SubmissionRoute+"/{sessionId}/{username}")] HttpRequest req,
+        [FunctionName("CreateSubmissionEntity")]
+        public static async Task<IActionResult> CreateSubmissionEntity(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = SubmissionRoute)] HttpRequest req,
         [Table(SubmissionTableName, Connection = ConnectionName)] IAsyncCollector<SubmissionEntity> entityTable,
-        string sessionId,
-        string username,
         ILogger log)
         {
             byte[] dllBytes;
-            byte[] analysisBytes;
+           
             var streamReader = new StreamReader(req.Body);
-     
-            var requestBody = await streamReader.ReadToEndAsync();
-            var data = JsonSerializer.Deserialize<Submission>(requestBody); 
-            dllBytes = data.Dll;
-            analysisBytes = data.Analysis;
-               
-            
-            await UploadSubmissionToBlob(sessionId+username,dllBytes, analysisBytes);
 
-            SubmissionEntity value = new SubmissionEntity(sessionId, username);
+            var requestBody = await streamReader.ReadToEndAsync();
+            SubmissionData data = JsonSerializer.Deserialize<SubmissionData>(requestBody);
+            dllBytes = data.ZippedDllFiles;
+            
+            await BlobUtility.UploadSubmissionToBlob(data.SessionId +'/'+ data.UserName, dllBytes,connectionString,DllContainerName);
+
+            SubmissionEntity value = new SubmissionEntity(data.SessionId, data.UserName);
             await entityTable.AddAsync(value);
             return new OkObjectResult(value);
 
         }
 
-        [FunctionName("GetSubmissionsbyUsername")]
-        public static async Task<IActionResult> GetSubmissionsByUser(
+
+        [FunctionName("GetSessionsbyHostname")]
+        public static async Task<IActionResult> GetSessionsbyHostname(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SessionRoute + "/{hostname}")] HttpRequest req,
+        [Table(SessionTableName, SessionEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
+        string hostname)
+        { 
+            var page = await tableClient.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{hostname}'").AsPages().FirstAsync();
+            return new OkObjectResult(page.Values);
+        }
+
+        
+
+        [FunctionName("GetSubmissionbyUsernameAndSessionId")]
+        public static async Task<IActionResult> GetSubmissionbyUsernameAndSessionId(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SubmissionRoute + "/{sessionId}/{username}")] HttpRequest req,
         string username,string sessionId)
         {
-            Submission submission = new Submission();
-            submission.Dll = await GetBlobContentAsync(DllContainerName, sessionId + username, connectionString);
-            submission.Analysis = await GetBlobContentAsync(AnalysisContainerName, sessionId + username, connectionString);
-            return new OkObjectResult(submission);
+            byte[] zippedDlls = await BlobUtility.GetBlobContentAsync(DllContainerName, sessionId + '/' + username, connectionString);
+            return new OkObjectResult(zippedDlls);
+        }
+
+        [FunctionName("GetAnalysisFilebyUsernameAndSessionId")]
+        public static async Task<IActionResult> GetAnalysisFilebyUsernameAndSessionId(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SessionRoute + "/{sessionId}/{username}")] HttpRequest req,
+        [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
+        string username,string sessionId)
+        {
+            var page = await tableClient.QueryAsync<AnalysisEntity>(filter: ).AsPages().FirstAsync();
+            return new OkObjectResult(page.Values);
         }
 
         [FunctionName("DeleteAllSessions")]
@@ -165,58 +179,8 @@ namespace ServerlessFunc
             }
         }
 
-        public static async Task UploadSubmissionToBlob(string blobname, byte[] dll, byte[] analysis)
-        {
-            BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-            BlobContainerClient DllcontainerClient = blobServiceClient.GetBlobContainerClient(DllContainerName);
+        
 
-            // Create the container if it doesn't exist
-            await DllcontainerClient.CreateIfNotExistsAsync();
-
-            // Upload the file to Azure Blob Storage
-            BlobClient DllblobClient = DllcontainerClient.GetBlobClient(blobname);
-            await DllblobClient.UploadAsync(new MemoryStream(dll), true);
-
-            BlobContainerClient AnalysiscontainerClient = blobServiceClient.GetBlobContainerClient(AnalysisContainerName);
-
-            // Create the container if it doesn't exist
-            await AnalysiscontainerClient.CreateIfNotExistsAsync();
-
-            // Upload the file to Azure Blob Storage
-            BlobClient AnalysisblobClient = DllcontainerClient.GetBlobClient(blobname);
-            await AnalysisblobClient.UploadAsync(new MemoryStream(analysis), true);
-        }
-
-        public static async Task<byte[]> GetBlobContentAsync(string containerName, string blobName, string connectionString)
-        {
-            try
-            {
-                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-                BlobClient blobClient = containerClient.GetBlobClient(blobName);
-
-                // Check if the blob exists
-                if (!await blobClient.ExistsAsync())
-                {
-                    return null; // Or throw an exception, depending on your requirements
-                }
-
-                // Download the blob content as a byte array
-                Response<BlobDownloadInfo> response = await blobClient.DownloadAsync();
-                BlobDownloadInfo blobInfo = response.Value;
-
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    await blobInfo.Content.CopyToAsync(memoryStream);
-                    return memoryStream.ToArray();
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions as needed
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return null; // Or throw an exception
-            }
-        }
+        
     }
 }
