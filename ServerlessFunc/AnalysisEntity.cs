@@ -6,10 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
+using Azure.Data.Tables;
+using ITableEntity = Azure.Data.Tables.ITableEntity;
+using System.ComponentModel.DataAnnotations;
 
 namespace ServerlessFunc
 {
-    public class AnalysisEntity
+    public class AnalysisEntity : ITableEntity
     {
         public const string PartitionKeyName = "AnalysisEntityPartitionKey";
         /// <summary>
@@ -49,6 +52,13 @@ namespace ServerlessFunc
         [JsonPropertyName("RowKey")]
         public string RowKey { get; set; }
 
+        /// <summary>
+        /// To store the timestamp of the entry.
+        /// </summary>
+        [JsonInclude]
+        [JsonPropertyName("Timestamp")]
+        public DateTimeOffset? Timestamp { get; set; }
+
         public AnalysisEntity(AnalysisData analysisData)
         {
             PartitionKey = PartitionKeyName;
@@ -57,6 +67,7 @@ namespace ServerlessFunc
             SessionId = analysisData.SessionId;
             UserName = analysisData.UserName;
             AnalysisFile = analysisData.AnalysisFile;
+            Timestamp = DateTime.Now;
         }
         public AnalysisEntity() : this(null) { }
 

@@ -64,5 +64,21 @@ namespace ServerlessFunc
                 return null; // Or throw an exception
             }
         }
+
+        public static async Task DeleteContainer(string containerName, string connectionString)
+        {
+            try
+            {
+                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+                await containerClient.DeleteAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO : Add logs
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

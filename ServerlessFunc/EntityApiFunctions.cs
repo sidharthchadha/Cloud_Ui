@@ -112,8 +112,8 @@ namespace ServerlessFunc
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SessionRoute + "/{sessionId}/{username}")] HttpRequest req,
         [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
         string username,string sessionId)
-        {
-            var page = await tableClient.QueryAsync<AnalysisEntity>(filter: ).AsPages().FirstAsync();
+        { 
+            var page = await tableClient.QueryAsync<AnalysisEntity>(filter: $"UserName eq '{username}' and SessionId eq '{sessionId}'").AsPages().FirstAsync();
             return new OkObjectResult(page.Values);
         }
 
@@ -134,7 +134,48 @@ namespace ServerlessFunc
             return new OkResult();
         }
 
-        [FunctionName("GetUsersbyTestname")]
+        [FunctionName("DeleteAllSubmissions")]
+        public static async Task<IActionResult> DeleteAllSubmissions(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = SubmissionRoute)] HttpRequest req,
+        [Table(SubmissionTableName, ConnectionName)] TableClient entityClient)
+        {
+            try
+            {
+                await BlobUtility.DeleteContainer(DllContainerName, connectionString);
+                await entityClient.DeleteAsync();
+            }
+            catch (RequestFailedException e) when (e.Status == 404)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkResult();
+        }
+
+        [FunctionName("DeleteAllAnalysis")]
+        public static async Task<IActionResult> DeleteAllAnalysis(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = AnalysisRoute)] HttpRequest req,
+        [Table(AnalysisTableName, ConnectionName)] TableClient entityClient)
+        {
+            try
+            {
+                await entityClient.DeleteAsync();
+            }
+            catch (RequestFailedException e) when (e.Status == 404)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkResult();
+        }
+
+
+
+
+
+
+
+        /*[FunctionName("GetUsersbyTestname")]
         public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = AnalysisRoute + "/{sessionid}/{testname}")] HttpRequest req,
         string sessionid,
@@ -177,7 +218,7 @@ namespace ServerlessFunc
                 log.LogError(ex, "An error occurred while processing the request.");
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
-        }
+        }*/
 
         
 
