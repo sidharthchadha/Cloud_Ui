@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFunc", "ServerlessFunc\ServerlessFunc.csproj", "{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerlessFuncTests", "ServerlessFuncTests\ServerlessFuncTests.csproj", "{A65D8C7D-3399-4397-8387-1290FCB487DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C1081456-4DB3-4362-84C4-8B684900C8EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A65D8C7D-3399-4397-8387-1290FCB487DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A65D8C7D-3399-4397-8387-1290FCB487DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A65D8C7D-3399-4397-8387-1290FCB487DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A65D8C7D-3399-4397-8387-1290FCB487DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
