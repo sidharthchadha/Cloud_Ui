@@ -15,15 +15,17 @@ namespace ServerlessFunc
         private readonly HttpClient _entityClient;
         private readonly string _sessionRoute;
         private readonly string _submissionRoute;
+        private readonly string _analysisRoute;
 
-        public DownloadApi(string sessionRoute, string submissionRoute)
+        public DownloadApi(string sessionRoute, string submissionRoute,string analysisRoute)
         {
             _entityClient = new HttpClient();
             _sessionRoute = sessionRoute;
             _submissionRoute = submissionRoute;
+            _analysisRoute = analysisRoute;
         }
 
-        public async Task<IReadOnlyList<SessionEntity>> GetSessionsByUserAsync(string hostUsername)
+        public async Task<IReadOnlyList<SessionEntity>> GetSessionsByHostNameAsync(string hostUsername)
         {
             var response = await _entityClient.GetAsync(_sessionRoute + $"/{hostUsername}");
             response.EnsureSuccessStatusCode();
@@ -38,7 +40,7 @@ namespace ServerlessFunc
             return entities;
         }
 
-        public async Task<Submission> GetSubmissionByUserAsync(string username,string sessionId)
+        public async Task<byte[]> GetSubmissionByUserNameAndSessionIdAsync(string username,string sessionId)
         {
             var response = await _entityClient.GetAsync(_submissionRoute + $"/{sessionId}/{username}");
             response.EnsureSuccessStatusCode();
@@ -49,7 +51,7 @@ namespace ServerlessFunc
 
             };
 
-            Submission submission = JsonSerializer.Deserialize<Submission>(result, options);
+            byte[] submission = JsonSerializer.Deserialize<byte[]>(result, options);
             return submission;
         }
 
@@ -58,6 +60,32 @@ namespace ServerlessFunc
             try
             {
                 using HttpResponseMessage response = await _entityClient.DeleteAsync(_sessionRoute);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("[cloud] Network Error Exception " + ex);
+            }
+        }
+
+        public async Task DeleteAllSubmissionsAsync()
+        {
+            try
+            {
+                using HttpResponseMessage response = await _entityClient.DeleteAsync(_submissionRoute);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("[cloud] Network Error Exception " + ex);
+            }
+        }
+
+        public async Task DeleteAllAnalysisAsync()
+        {
+            try
+            {
+                using HttpResponseMessage response = await _entityClient.DeleteAsync(_analysisRoute);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
