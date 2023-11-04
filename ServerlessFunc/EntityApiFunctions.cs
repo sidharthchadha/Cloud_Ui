@@ -24,10 +24,6 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ServerlessFunc
 {
-    
-    /// <summary>
-    /// Custom Azure functions APIs class.
-    /// </summary>
     public static class EntityApi
     {
         private const string SessionTableName = "SessionTable";

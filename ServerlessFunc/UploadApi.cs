@@ -15,25 +15,25 @@ namespace ServerlessFunc
         private readonly HttpClient _entityClient;
         private readonly string _sessionRoute;
         private readonly string _submissionRoute;
+        private readonly string _analysisRoute;
         
         private const string connectionString = "UseDevelopmentStorage=true";
 
-        public UploadApi(string sessionRoute, string submissionRoute)
+        public UploadApi(string sessionRoute, string submissionRoute, string analysisRoute)
         {
             _entityClient = new HttpClient();
             _sessionRoute = sessionRoute;
             _submissionRoute = submissionRoute;
+            _analysisRoute = analysisRoute;
         }
-
-        public async Task<SessionEntity> PostSessionAsync(string sessionId, string userName, List<string> tests)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sessionData"></param>
+        /// <returns>Returns the entity created on cloud</returns>
+        public async Task<SessionEntity> PostSessionAsync(SessionData sessionData)
         {
-            var requestData = new SessionRequestData
-            {
-                SessionId = sessionId,
-                Tests = tests
-            };
-
-            using HttpResponseMessage response = await _entityClient.PostAsJsonAsync<SessionRequestData>(_sessionRoute + $"/{userName}", requestData);
+            using HttpResponseMessage response = await _entityClient.PostAsJsonAsync<SessionData>(_sessionRoute, sessionData);
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions
@@ -45,15 +45,9 @@ namespace ServerlessFunc
             return entity;
         }
 
-        public async Task<SubmissionEntity> PostSubmissionAsync(string sessionId,string userName, byte[] dll, byte[] analysis)
+        public async Task<SubmissionEntity> PostSubmissionAsync(SubmissionData submissionData)
         {
-            var requestData = new Submission
-            {
-                Dll = dll,
-                Analysis = analysis
-            };
-
-            using HttpResponseMessage response = await _entityClient.PostAsJsonAsync<Submission>(_submissionRoute + $"/{sessionId}/{userName}", requestData);
+            using HttpResponseMessage response = await _entityClient.PostAsJsonAsync<SubmissionData>(_submissionRoute, submissionData);
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions
@@ -65,6 +59,19 @@ namespace ServerlessFunc
             return entity;
         }
 
+        public async Task<AnalysisEntity> PostAnalysisAsync(AnalysisData analysisData)
+        {
+            using HttpResponseMessage response = await _entityClient.PostAsJsonAsync<AnalysisData>(_analysisRoute, analysisData);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            AnalysisEntity entity = JsonSerializer.Deserialize<AnalysisEntity>(result, options);
+            return entity;
+        }
         
     }
 }
