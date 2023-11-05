@@ -90,13 +90,22 @@ namespace ServerlessFunc
         public static async Task<IActionResult> GetSessionsbyHostname(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SessionRoute + "/{hostname}")] HttpRequest req,
         [Table(SessionTableName, SessionEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
-        string hostname)
-        { 
-            var page = await tableClient.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{hostname}'").AsPages().FirstAsync();
-            return new OkObjectResult(page.Values);
+        string hostname,ILogger log)
+        {
+            try
+            {
+                var page = await tableClient.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{hostname}'").AsPages().FirstAsync();
+                return new OkObjectResult(page.Values);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred while processing the request.");
+                // Log the error message
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
 
-        
+
 
         [FunctionName("GetSubmissionbyUsernameAndSessionId")]
         public static async Task<IActionResult> GetSubmissionbyUsernameAndSessionId(
@@ -109,7 +118,7 @@ namespace ServerlessFunc
 
         [FunctionName("GetAnalysisFilebyUsernameAndSessionId")]
         public static async Task<IActionResult> GetAnalysisFilebyUsernameAndSessionId(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SessionRoute + "/{sessionId}/{username}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = AnalysisRoute + "/{sessionId}/{username}")] HttpRequest req,
         [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
         string username,string sessionId)
         { 
