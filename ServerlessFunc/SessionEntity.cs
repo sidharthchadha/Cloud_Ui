@@ -12,16 +12,22 @@ namespace ServerlessFunc
     {
         public const string PartitionKeyName = "SessionEntityPartitionKey";
 
-        public SessionEntity(SessionData sessionData)
+        public SessionEntity(SessionData sessionData = null)
         {
             PartitionKey = PartitionKeyName;
             RowKey = Guid.NewGuid().ToString();
             Id = RowKey;
-            SessionId = sessionData.SessionId;
-            HostUserName = sessionData.HostUserName;
+
+            if (sessionData != null)
+            {
+                SessionId = sessionData.SessionId;
+                HostUserName = sessionData.HostUserName;
+                Tests = sessionData.Tests;
+                Students = sessionData.Students;
+            }
+
             Timestamp = DateTime.Now;
-            Tests = sessionData.Tests;
-            Students = sessionData.Students;
+            ETag = new ETag();
         }
 
         public SessionEntity() : this(null) { }
@@ -75,7 +81,7 @@ namespace ServerlessFunc
         /// To store the list of studnets joined in session
         /// </summary>
         [JsonInclude]
-        [JsonPropertyName("Tests")]
+        [JsonPropertyName("Students")]
         public List<string> Students { get; set; }
 
         [JsonIgnore]
@@ -84,13 +90,15 @@ namespace ServerlessFunc
 
     public class SessionData
     {
+        
         public string HostUserName { get; set; }
+        
         public string SessionId { get; set; }
-
-        [JsonPropertyName("SessionTests")]
+        [JsonInclude]
+        [JsonPropertyName("Tests")]
         public List<string> Tests { get; set; }
+        
 
-        [JsonPropertyName("SessionStudents")]
         public List<string> Students { get; set; }
     }
 }

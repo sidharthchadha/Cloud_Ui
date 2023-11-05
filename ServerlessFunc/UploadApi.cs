@@ -41,7 +41,7 @@ namespace ServerlessFunc
                 PropertyNameCaseInsensitive = true
             };
 
-            SessionEntity entity = JsonSerializer.Deserialize<SessionEntity>(result, options);
+            SessionEntity entity = System.Text.Json.JsonSerializer.Deserialize<SessionEntity>(result, options);
             return entity;
         }
 
