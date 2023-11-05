@@ -75,7 +75,13 @@ namespace UnitTests
             analysis.UserName = "Student1";
             analysis.AnalysisFile = Encoding.ASCII.GetBytes("demotext");
             AnalysisEntity postEntity = await _uploadClient.PostAnalysisAsync(analysis);
-
+            IReadOnlyList<AnalysisEntity> entities = await _downloadClient.GetAnalysisByUserNameAndSessionIdAsync(analysis.UserName, analysis.SessionId);
+            await _downloadClient.DeleteAllAnalysisAsync();
+            Assert.AreEqual(1, entities.Count);
+            Assert.AreEqual(entities[0].SessionId, postEntity.SessionId);
+            Assert.AreEqual(entities[0].UserName, postEntity.UserName);
+            string text = Encoding.ASCII.GetString(entities[0].AnalysisFile);
+            Assert.AreEqual("demotext", text);
             
         }
     }
