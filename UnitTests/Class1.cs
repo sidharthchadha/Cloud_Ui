@@ -24,9 +24,10 @@ namespace UnitTests
         }
         [TestMethod()]
 
-        public async Task PostAndGetTest()
+        public async Task PostAndGetTestSession()
         {
             await _downloadClient.DeleteAllSessionsAsync();
+            
             SessionData sessionData = new SessionData();
             sessionData.HostUserName = "name1";
             sessionData.SessionId = "1";
@@ -45,10 +46,37 @@ namespace UnitTests
 
             await _uploadClient.PostSessionAsync(sessionData);
             IReadOnlyList<SessionEntity> sessionEntity = await _downloadClient.GetSessionsByHostNameAsync("name1");
-            Assert.Equals(1, sessionEntity.Count);
-            Assert.Equals(sessionEntity[0].SessionId, sessionData.SessionId);
-            Assert.Equals(sessionEntity[0].Tests, sessionData.Tests);
+            Assert.AreEqual(1, sessionEntity.Count);
+            Assert.AreEqual(sessionEntity[0].SessionId, sessionData.SessionId);
+            Assert.AreEqual(sessionEntity[0].Tests, sessionData.Tests);
+            
         }
+        [TestMethod()]
+        public async Task PostAndGetTestSubmission()
+        {
+            
+            SubmissionData submission = new SubmissionData();
+            submission.SessionId = "1";
+            submission.UserName = "Student1";
+            submission.ZippedDllFiles = Encoding.ASCII.GetBytes("demotext");
+            SubmissionEntity postEntity = await _uploadClient.PostSubmissionAsync(submission);
+            
+            byte[] submissionFile = await _downloadClient.GetSubmissionByUserNameAndSessionIdAsync(submission.UserName, submission.SessionId);
+            string text = Encoding.ASCII.GetString(submissionFile);
+            await _downloadClient.DeleteAllSubmissionsAsync();
+            Assert.AreEqual(text, "demotext");
+          
+        }
+        [TestMethod()]
+        public async Task PostAndGetTestAnalysis()
+        {
+            AnalysisData analysis = new AnalysisData();
+            analysis.SessionId = "1";
+            analysis.UserName = "Student1";
+            analysis.AnalysisFile = Encoding.ASCII.GetBytes("demotext");
+            AnalysisEntity postEntity = await _uploadClient.PostAnalysisAsync(analysis);
 
+            
+        }
     }
 }
