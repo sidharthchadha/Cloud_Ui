@@ -95,38 +95,10 @@ namespace ServerlessFunc
             try
             {
                 var page = await tableClient.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{hostname}'").AsPages().FirstAsync();
-                // Log each SessionEntity in page.Values
-                foreach (var sessionEntity in page.Values)
-                {
-                    log.LogInformation($"SessionId: {sessionEntity.SessionId}");
-                    log.LogInformation($"HostUserName: {sessionEntity.HostUserName}");
-
-                    // Log the list of tests
-                    if (sessionEntity.Tests != null)
-                    {
-                        log.LogInformation("Tests:");
-                        foreach (var test in sessionEntity.Tests)
-                        {
-                            log.LogInformation($"- {test}");
-                        }
-                    }
-
-                    // Log the list of students
-                    if (sessionEntity.Students != null)
-                    {
-                        log.LogInformation("Students:");
-                        foreach (var student in sessionEntity.Students)
-                        {
-                            log.LogInformation($"- {student}");
-                        }
-                    }
-                }
                 return new OkObjectResult(page.Values);
             }
             catch (Exception ex)
             {
-                
-             
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -149,6 +121,16 @@ namespace ServerlessFunc
         string username,string sessionId)
         { 
             var page = await tableClient.QueryAsync<AnalysisEntity>(filter: $"UserName eq '{username}' and SessionId eq '{sessionId}'").AsPages().FirstAsync();
+            return new OkObjectResult(page.Values);
+        }
+
+        [FunctionName("GetAnalysisFilebySessionId")]
+        public static async Task<IActionResult> GetAnalysisFilebySessionId(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = AnalysisRoute + "/{sessionId}")] HttpRequest req,
+        [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient,
+        string sessionId)
+        {
+            var page = await tableClient.QueryAsync<AnalysisEntity>(filter: $"SessionId eq '{sessionId}'").AsPages().FirstAsync();
             return new OkObjectResult(page.Values);
         }
 

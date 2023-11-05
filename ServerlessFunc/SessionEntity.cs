@@ -75,14 +75,14 @@ namespace ServerlessFunc
         /// </summary>
         [JsonInclude]
         [JsonPropertyName("Tests")]
-        public List<string> Tests { get; set; }
+        public byte[] Tests { get; set; }
 
         /// <summary>
         /// To store the list of studnets joined in session
         /// </summary>
         [JsonInclude]
         [JsonPropertyName("Students")]
-        public List<string> Students { get; set; }
+        public byte[] Students { get; set; }
 
         [JsonIgnore]
         public ETag ETag { get; set; }
@@ -94,11 +94,8 @@ namespace ServerlessFunc
         public string HostUserName { get; set; }
         
         public string SessionId { get; set; }
-        [JsonInclude]
-        [JsonPropertyName("Tests")]
-        public List<string> Tests { get; set; }
-        
-
-        public List<string> Students { get; set; }
+       
+        public byte[] Tests { get; set; }
+        public byte[] Students { get; set; }
     }
 }

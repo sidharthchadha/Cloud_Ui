@@ -69,7 +69,20 @@ namespace ServerlessFunc
             IReadOnlyList<AnalysisEntity> entities = System.Text.Json.JsonSerializer.Deserialize<IReadOnlyList<AnalysisEntity>>(result, options);
             return entities;
         }
+        public async Task<IReadOnlyList<AnalysisEntity>> GetAnalysisBySessionIdAsync(string sessionId)
+        {
+            var response = await _entityClient.GetAsync(_analysisRoute + $"/{sessionId}");
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
 
+            };
+
+            IReadOnlyList<AnalysisEntity> entities = System.Text.Json.JsonSerializer.Deserialize<IReadOnlyList<AnalysisEntity>>(result, options);
+            return entities;
+        }
         public async Task DeleteAllSessionsAsync()
         {
             try
