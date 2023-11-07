@@ -55,7 +55,7 @@ namespace ServerlessFunc
             return submission;
         }
 
-        public async Task<byte[]> GetAnalysisByUserNameAndSessionIdAsync(string username, string sessionId)
+        public async Task<IReadOnlyList<AnalysisEntity>> GetAnalysisByUserNameAndSessionIdAsync(string username, string sessionId)
         {
             var response = await _entityClient.GetAsync(_analysisRoute + $"/{sessionId}/{username}");
             response.EnsureSuccessStatusCode();
@@ -66,10 +66,23 @@ namespace ServerlessFunc
 
             };
 
-            byte[] analysis = JsonSerializer.Deserialize<byte[]>(result, options);
-            return analysis;
+            IReadOnlyList<AnalysisEntity> entities = System.Text.Json.JsonSerializer.Deserialize<IReadOnlyList<AnalysisEntity>>(result, options);
+            return entities;
         }
+        public async Task<IReadOnlyList<AnalysisEntity>> GetAnalysisBySessionIdAsync(string sessionId)
+        {
+            var response = await _entityClient.GetAsync(_analysisRoute + $"/{sessionId}");
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
 
+            };
+
+            IReadOnlyList<AnalysisEntity> entities = System.Text.Json.JsonSerializer.Deserialize<IReadOnlyList<AnalysisEntity>>(result, options);
+            return entities;
+        }
         public async Task DeleteAllSessionsAsync()
         {
             try

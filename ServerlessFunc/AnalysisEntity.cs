@@ -64,9 +64,12 @@ namespace ServerlessFunc
             PartitionKey = PartitionKeyName;
             RowKey = Guid.NewGuid().ToString();
             Id = RowKey;
-            SessionId = analysisData.SessionId;
-            UserName = analysisData.UserName;
-            AnalysisFile = analysisData.AnalysisFile;
+            if (analysisData != null)
+            {
+                SessionId = analysisData.SessionId;
+                UserName = analysisData.UserName;
+                AnalysisFile = analysisData.AnalysisFile;
+            }
             Timestamp = DateTime.Now;
         }
         public AnalysisEntity() : this(null) { }
