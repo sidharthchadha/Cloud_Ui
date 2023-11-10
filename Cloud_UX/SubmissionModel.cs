@@ -40,26 +40,28 @@ namespace Cloud_UX
         /// <returns>Returns the submission entity for given session id</returns>
         public async Task<IReadOnlyList<SubmissionEntity>> GetSubmissions(string sessionId, string userName)
         {
-            //IReadOnlyList<SubmissionEntity>? getEntity = await fileDownloadApi.GetFilesBySessionIdAsync(sessionId);
-            IReadOnlyList<SubmissionEntity>? getEntity = null;
-            SubmissionsList = getEntity;
-            return getEntity;
+            // Call the API to get the submission bytes
+            byte[] submissionBytes = await fileDownloadApi.GetSubmissionByUserNameAndSessionIdAsync(userName, sessionId);
+
+            // If the submissionBytes is null, return an empty list
+            if (submissionBytes == null)
+            {
+                return new List<SubmissionEntity>();
+            }
+
+            // Convert the bytes to a SubmissionEntity object
+            SubmissionEntity submissionEntity = new SubmissionEntity(sessionId, userName);
+
+            // You need to define a method to convert the byte array to your SubmissionEntity. Assuming a method called ConvertBytesToSubmissionEntity.
+            // submissionEntity = ConvertBytesToSubmissionEntity(submissionBytes);
+
+            // Assuming SubmissionsList is a property of your class
+            SubmissionsList = new List<SubmissionEntity> { submissionEntity };
+
+            return SubmissionsList;
         }
 
-        /// <summary>
-        /// For getting the path of user with respect to their local system.. 
-        /// </summary>
-        /// <returns>Return a path to download folder</returns>
-        public static string GetDownloadFolderPath() //Getting the path to folder where the downloads folder contains. 
-        {
-            return System.Convert.ToString(
-                Microsoft.Win32.Registry.GetValue(
-                     @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
-                    , "{374DE290-123F-4565-9164-39C4925E467B}"
-                    , String.Empty
-                )
-            );
-        }
+        
 
 
     }

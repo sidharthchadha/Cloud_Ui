@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Source\Repos\Cloud\ServerlessFunc\ServerlessFunc.csproj" />
+    <ProjectReference Include="..\..\..\Cloud-master_latest\Cloud-master\ServerlessFunc\ServerlessFunc.csproj" />
   </ItemGroup>
 
 </Project>

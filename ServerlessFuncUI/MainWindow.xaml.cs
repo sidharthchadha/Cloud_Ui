@@ -27,6 +27,7 @@ using ServerlessFunc;
 using Cloud_UX;
 using System.Diagnostics;
 using System.Collections;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ServerlessFuncUI
 {
@@ -45,6 +46,10 @@ namespace ServerlessFuncUI
             viewModel.PropertyChanged += Listener;
             sessions = new List<SessionEntity> { };
             Trace.WriteLine("[Cloud] Session View created Successfully");
+            BarGraphPage cur_bar_graph = new BarGraphPage();
+            Trace.WriteLine("Bargraph page created");
+            SubmissionsPage.Content = cur_bar_graph;
+
         }
      
         private readonly SessionsViewModel viewModel;
