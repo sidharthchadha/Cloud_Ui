@@ -91,7 +91,7 @@ namespace UnitTests
             SessionData sessionData = GetDummySessionData();
             await _uploadClient.PostSessionAsync(sessionData);
             IReadOnlyList<SessionEntity> sessionEntity = await _downloadClient.GetSessionsByHostNameAsync("name1");
-            await _downloadClient.DeleteAllSessionsAsync();
+            // await _downloadClient.DeleteAllSessionsAsync();
             Assert.AreEqual(1, sessionEntity.Count);
             CollectionAssert.AreEqual(sessionData.Students, sessionEntity[0].Students, "Students list mismatch");
             CollectionAssert.AreEqual(sessionData.Tests, sessionEntity[0].Tests, "Tests list mismatch");
