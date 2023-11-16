@@ -117,5 +117,12 @@ namespace ServerlessFuncUI
             SubmissionsPage.Content = submissionsPage;
         }
 
+        private void RefreshButtonClick(object sender, RoutedEventArgs e)
+        {
+            Trace.WriteLine("[Cloud] Session Refresh Button pressed");
+            viewModel.GetSessions(UserName);
+            viewModel.PropertyChanged += Listener;
+        }
+
     }
 }

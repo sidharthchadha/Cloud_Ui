@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFunc", "ServerlessFunc\ServerlessFunc.csproj", "{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C1081456-4DB3-4362-84C4-8B684900C8EF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{059D9EA6-FFA4-4884-A134-95D228F37150} = {059D9EA6-FFA4-4884-A134-95D228F37150}
@@ -15,16 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFuncUI", "Serverl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud_UX", "Cloud_UX\Cloud_UX.csproj", "{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFunc", "..\..\Cloud-master (3)\Cloud-master\ServerlessFunc\ServerlessFunc.csproj", "{C77F76DB-73F6-404D-8D64-4A821D4885BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BDFB42E-7D4E-444A-B1A2-373A01FABD4B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1081456-4DB3-4362-84C4-8B684900C8EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,6 +33,10 @@ Global
 		{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

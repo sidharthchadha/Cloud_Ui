@@ -62,6 +62,7 @@
 
                 </StackPanel>
             </ScrollViewer>
+            <Button Grid.Row="2" Content="Refresh" Click="RefreshButtonClick" FontSize="16"></Button>
             
 
         </Grid>
