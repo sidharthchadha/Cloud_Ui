@@ -62,8 +62,11 @@
 
                 </StackPanel>
             </ScrollViewer>
-            <Button Grid.Row="2" Content="Refresh" Click="RefreshButtonClick" FontSize="16"></Button>
-            
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5">
+                <Button Content="←" Click="LeftButtonClick" FontSize="14" Margin="0,0,5,0" MinHeight="20"></Button>
+                <Button Content="Refresh" Click="RefreshButtonClick" FontSize="16" MinHeight="20"></Button>
+                <Button Content="→" Click="RightButtonClick" FontSize="14" Margin="5,0,0,0" MinHeight="20"></Button>
+            </StackPanel>
 
         </Grid>
         <!--Frame to show the submissions of the selected session-->

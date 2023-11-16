@@ -16,4 +16,8 @@
     <PackageReference Include="coverlet.collector" Version="3.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Cloud-master (3)\Cloud-master\ServerlessFunc\ServerlessFunc.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -37,6 +37,10 @@ namespace ServerlessFuncUI
     public partial class SessionsPage : Page
     {
         public string userName;
+        public static int iterator = 0;
+        public BarGraphPage cur_bar_graph;
+        public BarGraphPage2 cur_bar_graph2;
+        public BarGraphPage3 cur_bar_graph3;
         public SessionsPage()
         {
             InitializeComponent();
@@ -46,7 +50,10 @@ namespace ServerlessFuncUI
             viewModel.PropertyChanged += Listener;
             sessions = new List<SessionEntity> { };
             Trace.WriteLine("[Cloud] Session View created Successfully");
-            BarGraphPage cur_bar_graph = new BarGraphPage();
+            cur_bar_graph = new BarGraphPage();
+            cur_bar_graph2 = new BarGraphPage2();
+            cur_bar_graph3 = new BarGraphPage3();
+
             Trace.WriteLine("Bargraph page created");
             SubmissionsPage.Content = cur_bar_graph;
 
@@ -123,6 +130,64 @@ namespace ServerlessFuncUI
             viewModel.GetSessions(UserName);
             viewModel.PropertyChanged += Listener;
         }
+
+        private void RotateGraph(int add)
+        {
+            if (add == -1)
+            {
+                if (iterator == 0)
+                {
+                    iterator = 2;
+                    SubmissionsPage.Content = cur_bar_graph3;
+
+                }
+                else if(iterator == 1)
+                {
+                    iterator = 0;
+                    SubmissionsPage.Content = cur_bar_graph;
+                }
+                else
+                {
+                    iterator = 1;
+                    SubmissionsPage.Content = cur_bar_graph2;
+
+                }
+
+            }
+            else
+            {
+                if (iterator == 0)
+                {
+                    iterator = 1;
+                    SubmissionsPage.Content = cur_bar_graph2;
+
+                }
+                else if (iterator == 1)
+                {
+                    iterator = 2;
+                    SubmissionsPage.Content = cur_bar_graph3;
+                }
+                else
+                {
+                    iterator = 0;
+                    SubmissionsPage.Content = cur_bar_graph;
+
+                }
+
+            }
+
+        }
+
+        private void LeftButtonClick(object sender, RoutedEventArgs e)
+        {
+            RotateGraph(-1);
+        }
+
+        private void RightButtonClick(object sender, RoutedEventArgs e)
+        {
+            RotateGraph(1);
+        }
+
 
     }
 }

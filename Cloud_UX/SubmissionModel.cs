@@ -61,7 +61,35 @@ namespace Cloud_UX
             return SubmissionsList;
         }
 
-        
+        /// <summary>
+        /// For getting the path of user with respect to their local system.. 
+        /// </summary>
+        /// <returns>Return a path to download folder</returns>
+        public static string GetDownloadFolderPath() //Getting the path to folder where the downloads folder contains. 
+        {
+            return System.Convert.ToString(
+                Microsoft.Win32.Registry.GetValue(
+                     @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
+                    , "{374DE290-123F-4565-9164-39C4925E467B}"
+                    , String.Empty
+                )
+            );
+        }
+
+        /// <summary>
+        /// Writes the file to the download folder. 
+        /// </summary>
+        /// <param name="num">Index in the submission list.</param>
+        public void DownloadPdf(int num) //function for converting into pdf and write file at given download path. 
+        {
+            // byte[] pdf = SubmissionsList[num].Pdf;
+            byte[] pdf =null ;
+            string path = GetDownloadFolderPath() + "\\" + SubmissionsList[num].UserName + "_" + SubmissionsList[num].SessionId + ".txt";
+            File.WriteAllBytes(path, pdf);
+        }
+
+      
+
 
 
     }
