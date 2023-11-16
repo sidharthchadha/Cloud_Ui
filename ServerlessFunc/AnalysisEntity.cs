@@ -79,7 +79,7 @@ namespace ServerlessFunc
 
     }
 
-    public class AnalysisData 
+    public class AnalysisData
     {
         public string SessionId { get; set; }
         public string UserName { get; set; }

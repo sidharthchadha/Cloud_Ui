@@ -1,6 +1,5 @@
 ﻿using Azure;
 using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using ITableEntity = Azure.Data.Tables.ITableEntity;
 
@@ -18,7 +17,7 @@ namespace ServerlessFunc
             Id = RowKey;
             SessionId = sessionId;
             UserName = username;
-            BlobName = sessionId +'/'+ username; 
+            BlobName = sessionId + '/' + username;
             Timestamp = DateTime.Now;
         }
 
@@ -30,12 +29,12 @@ namespace ServerlessFunc
         [JsonInclude]
         [JsonPropertyName("SessionId")] //Unique id for the session conducted
         public string SessionId { get; set; }
-         
+
         /// <summary>
         /// To store the blob name of the submission.
         /// </summary>
         [JsonInclude]
-        [JsonPropertyName("BlobName")] 
+        [JsonPropertyName("BlobName")]
         public string BlobName { get; set; }
 
 

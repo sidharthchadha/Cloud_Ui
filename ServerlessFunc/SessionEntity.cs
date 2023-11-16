@@ -1,7 +1,5 @@
 ﻿using Azure;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using ITableEntity = Azure.Data.Tables.ITableEntity;
 using JsonIgnoreAttribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
@@ -90,12 +88,13 @@ namespace ServerlessFunc
 
     public class SessionData
     {
-        
+
         public string HostUserName { get; set; }
-        
+
         public string SessionId { get; set; }
-       
+
         public byte[] Tests { get; set; }
         public byte[] Students { get; set; }
     }
 }
+

@@ -12,7 +12,7 @@ namespace ServerlessFunc
 {
     public class BlobUtility
     {
-        public static async Task UploadSubmissionToBlob(string blobname, byte[] dll,string connectionString,string DllContainerName)
+        public static async Task UploadSubmissionToBlob(string blobname, byte[] dll, string connectionString, string DllContainerName)
         {
             try
             {

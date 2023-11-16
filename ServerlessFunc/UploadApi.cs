@@ -1,10 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,7 +10,7 @@ namespace ServerlessFunc
         private readonly string _sessionRoute;
         private readonly string _submissionRoute;
         private readonly string _analysisRoute;
-        
+
         private const string connectionString = "UseDevelopmentStorage=true";
 
         public UploadApi(string sessionRoute, string submissionRoute, string analysisRoute)
@@ -72,6 +66,6 @@ namespace ServerlessFunc
             AnalysisEntity entity = JsonSerializer.Deserialize<AnalysisEntity>(result, options);
             return entity;
         }
-        
+
     }
 }

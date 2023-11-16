@@ -1,10 +1,7 @@
-﻿using Microsoft.Identity.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -17,7 +14,7 @@ namespace ServerlessFunc
         private readonly string _submissionRoute;
         private readonly string _analysisRoute;
 
-        public DownloadApi(string sessionRoute, string submissionRoute,string analysisRoute)
+        public DownloadApi(string sessionRoute, string submissionRoute, string analysisRoute)
         {
             _entityClient = new HttpClient();
             _sessionRoute = sessionRoute;
@@ -40,7 +37,7 @@ namespace ServerlessFunc
             return entities;
         }
 
-        public async Task<byte[]> GetSubmissionByUserNameAndSessionIdAsync(string username,string sessionId)
+        public async Task<byte[]> GetSubmissionByUserNameAndSessionIdAsync(string username, string sessionId)
         {
             var response = await _entityClient.GetAsync(_submissionRoute + $"/{sessionId}/{username}");
             response.EnsureSuccessStatusCode();
