@@ -38,9 +38,12 @@ namespace ServerlessFuncUI
     {
         public string userName;
         public static int iterator = 0;
-        public BarGraphPage cur_bar_graph;
-        public BarGraphPage2 cur_bar_graph2;
-        public BarGraphPage3 cur_bar_graph3;
+        public InsightPage1 insight_page_1;
+        public InsightPage2 insight_page_2;
+        public InsightPage3 insight_page_3;
+        public InsightPage4 insight_page_4;
+        public InsightPage5 insight_page_5;
+        public InsightPage6 insight_page_6;
         public SessionsPage()
         {
             InitializeComponent();
@@ -50,12 +53,16 @@ namespace ServerlessFuncUI
             viewModel.PropertyChanged += Listener;
             sessions = new List<SessionEntity> { };
             Trace.WriteLine("[Cloud] Session View created Successfully");
-            cur_bar_graph = new BarGraphPage();
-            cur_bar_graph2 = new BarGraphPage2();
-            cur_bar_graph3 = new BarGraphPage3();
+            insight_page_1 = new InsightPage1();
+            insight_page_2 = new InsightPage2();
+            insight_page_3 = new InsightPage3();
+            insight_page_4 = new InsightPage4();
+            insight_page_5 = new InsightPage5();
+            insight_page_6 = new InsightPage6();
+
 
             Trace.WriteLine("Bargraph page created");
-            SubmissionsPage.Content = cur_bar_graph;
+            SubmissionsPage.Content = insight_page_1;
 
         }
      
@@ -72,9 +79,7 @@ namespace ServerlessFuncUI
         {
             sessions = viewModel.ReceivedSessions;
 
-            /*
-             * Building the UI when no sessions are conducted.
-             */
+            
             if (sessions?.Count == 0)
             {
                 Label label = new Label()
@@ -137,20 +142,37 @@ namespace ServerlessFuncUI
             {
                 if (iterator == 0)
                 {
-                    iterator = 2;
-                    SubmissionsPage.Content = cur_bar_graph3;
+                    iterator = 5;
+                    SubmissionsPage.Content = insight_page_6;
 
                 }
                 else if(iterator == 1)
                 {
                     iterator = 0;
-                    SubmissionsPage.Content = cur_bar_graph;
+                    SubmissionsPage.Content = insight_page_1;
+                }
+                else if(iterator==2)
+                {
+                    iterator = 1;
+                    SubmissionsPage.Content = insight_page_2;
+
+                }
+                else if (iterator == 3)
+                {
+                    iterator = 2;
+                    SubmissionsPage.Content = insight_page_3;
+
+                }
+                else if (iterator == 4)
+                {
+                    iterator = 3;
+                    SubmissionsPage.Content = insight_page_4;
+
                 }
                 else
                 {
-                    iterator = 1;
-                    SubmissionsPage.Content = cur_bar_graph2;
-
+                    iterator = 4;
+                    SubmissionsPage.Content = insight_page_5;
                 }
 
             }
@@ -159,18 +181,36 @@ namespace ServerlessFuncUI
                 if (iterator == 0)
                 {
                     iterator = 1;
-                    SubmissionsPage.Content = cur_bar_graph2;
+                    SubmissionsPage.Content = insight_page_2;
 
                 }
                 else if (iterator == 1)
                 {
                     iterator = 2;
-                    SubmissionsPage.Content = cur_bar_graph3;
+                    SubmissionsPage.Content = insight_page_3;
+                }
+                else if(iterator==2)
+                {
+                    iterator = 3;
+                    SubmissionsPage.Content = insight_page_3;
+
+                }
+                else if(iterator == 3)
+                {
+                    iterator = 4;
+                    SubmissionsPage.Content = insight_page_4;
+
+                }
+                else if(iterator == 4)
+                {
+                    iterator = 5;
+                    SubmissionsPage.Content = insight_page_5;
+
                 }
                 else
                 {
                     iterator = 0;
-                    SubmissionsPage.Content = cur_bar_graph;
+                    SubmissionsPage.Content = insight_page_1;
 
                 }
 

@@ -35,7 +35,7 @@ namespace ServerlessFuncUI
     /// <summary>
     /// Interaction logic for BarGraphPage
     /// </summary>
-    public partial class BarGraphPage2 : Page
+    public partial class InsightPage3 : Page
     {
         private static Random random = new Random(); // Shared Random instance
 
@@ -44,7 +44,7 @@ namespace ServerlessFuncUI
         private ChartValues<ObservableValue> highestValues;
         private ChartValues<ObservableValue> lowestValues;
 
-        public BarGraphPage2()
+        public InsightPage3()
         {
             InitializeComponent();
 
