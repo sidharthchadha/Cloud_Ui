@@ -9,6 +9,7 @@
       Title="InsightPage6">
 
     <Grid>
-        
+        <ListBox x:Name="studentsListBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="300"/>
+        <Button Content="Get Students Without Analysis" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="OnGetStudentsWithoutAnalysis"/>
     </Grid>
 </Page>

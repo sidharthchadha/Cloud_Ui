@@ -28,45 +28,49 @@ using ServerlessFunc;
 using Cloud_UX;
 using System.Diagnostics;
 using System.Collections;
-
+using System.Diagnostics.Contracts;
 
 namespace ServerlessFuncUI
 {
     /// <summary>
     /// Interaction logic for BarGraphPage
     /// </summary>
-    public partial class InsightPage3 : Page
+    public sealed partial class InsightPage3 : Page
     {
-        private static Random random = new Random(); // Shared Random instance
-
-        private ChartValues<ObservableValue> meanValues;
-        private ChartValues<ObservableValue> medianValues;
-        private ChartValues<ObservableValue> highestValues;
-        private ChartValues<ObservableValue> lowestValues;
+        private readonly InsightsApi _insightsApi;
+        public string InsightPath = "http://localhost:7074/api/insights";
 
         public InsightPage3()
         {
-            InitializeComponent();
-
-            // Initialize chart values with more data points
-            meanValues = new ChartValues<ObservableValue> { new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()) };
-            medianValues = new ChartValues<ObservableValue> { new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()) };
-            highestValues = new ChartValues<ObservableValue> { new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()) };
-            lowestValues = new ChartValues<ObservableValue> { new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()), new ObservableValue(GetRandomValue()) };
-
-            // Set chart data context
-            DataContext = this;
+            this.InitializeComponent();
+            _insightsApi = new InsightsApi(InsightPath);
         }
 
-        private double GetRandomValue()
+        private async void GetRunningAverage_Click(object sender, RoutedEventArgs e)
         {
-            // Replace this with your logic to get random values
-            return random.Next(1, 100);
-        }
+            try
+            {
+                // Replace "your_hostname" and "your_test_name" with the actual values
+                string hostname = "your_hostname";
+                string testName = "your_test_name";
 
-        public ChartValues<ObservableValue> MeanValues { get => meanValues; set => meanValues = value; }
-        public ChartValues<ObservableValue> MedianValues { get => medianValues; set => medianValues = value; }
-        public ChartValues<ObservableValue> HighestValues { get => highestValues; set => highestValues = value; }
-        public ChartValues<ObservableValue> LowestValues { get => lowestValues; set => lowestValues = value; }
+                // Call the RunningAverageOnGivenTest method from InsightsApi
+                List<double> averageList = await _insightsApi.RunningAverageOnGivenTest(hostname, testName);
+
+                // Handle the results, update the TextBlock with the averages
+                resultTextBlock.Text = "Running Averages:\n";
+                foreach (double average in averageList)
+                {
+                    resultTextBlock.Text += $"{average}\n";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., network errors, JSON parsing errors)
+                // You might want to display an error message to the user
+                // MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                resultTextBlock.Text = $"Error: {ex.Message}";
+            }
+        }
     }
 }

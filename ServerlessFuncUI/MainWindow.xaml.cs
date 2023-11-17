@@ -192,19 +192,19 @@ namespace ServerlessFuncUI
                 else if(iterator==2)
                 {
                     iterator = 3;
-                    SubmissionsPage.Content = insight_page_3;
+                    SubmissionsPage.Content = insight_page_4;
 
                 }
                 else if(iterator == 3)
                 {
                     iterator = 4;
-                    SubmissionsPage.Content = insight_page_4;
+                    SubmissionsPage.Content = insight_page_5;
 
                 }
                 else if(iterator == 4)
                 {
                     iterator = 5;
-                    SubmissionsPage.Content = insight_page_5;
+                    SubmissionsPage.Content = insight_page_6;
 
                 }
                 else
