@@ -39,11 +39,12 @@ namespace ServerlessFuncUI
     {
         
         private readonly InsightsApi _insightsApi;
-
-        public InsightPage2()
+        public string hostname;
+        public InsightPage2(string hostname)
         {
             this.InitializeComponent();
             _insightsApi = new InsightsApi("your_insights_route");
+            this.hostname = hostname;
         }
 
         private async void OnGetFailedStudentsClick(object sender, RoutedEventArgs e)

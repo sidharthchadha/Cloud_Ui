@@ -54,7 +54,7 @@ namespace ServerlessFuncUI
             sessions = new List<SessionEntity> { };
             Trace.WriteLine("[Cloud] Session View created Successfully");
             insight_page_1 = new InsightPage1();
-            insight_page_2 = new InsightPage2();
+            insight_page_2 = new InsightPage2(userName);
             insight_page_3 = new InsightPage3();
             insight_page_4 = new InsightPage4();
             insight_page_5 = new InsightPage5();
