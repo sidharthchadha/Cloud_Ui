@@ -22,33 +22,34 @@ namespace ServerlessFuncUI
     public sealed partial class InsightPage4 : Page
     {
         private readonly InsightsApi _insightsApi;
-
-        public InsightPage4()
+        public static string InsightPath = "http://localhost:7074/api/insights";
+        public string hostname;
+        public InsightPage4(string host_name)
         {
             this.InitializeComponent();
+            this.hostname = host_name;
 
             // Initialize InsightsApi with the appropriate insightsRoute
-            _insightsApi = new InsightsApi("your_insights_route_here");
+            _insightsApi = new InsightsApi(InsightPath);
         }
 
         private async void OnGetStudentAverageClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Replace "hostname" and "studentName" with actual values
-                string hostname = "your_hostname_here";
-                string studentName = "your_studentName_here";
+               
+                string studentName = StudentNameTextBox.Text;
 
                 // Call the RunningAverageOnGivenStudent method from InsightsApi
                 var averageList = await _insightsApi.RunningAverageOnGivenStudent(hostname, studentName);
 
                 // Display the result in the TextBlock
-                ResultTextBlock.Text = "Student Average: " + string.Join(", ", averageList);
+                resultListBox.Text = "Student Average: " + string.Join(", ", averageList);
             }
             catch (Exception ex)
             {
                 // Handle exceptions appropriately (e.g., display an error message)
-                ResultTextBlock.Text = "Error: " + ex.Message;
+                resultListBox.Text = "Error: " + ex.Message;
             }
         }
     }

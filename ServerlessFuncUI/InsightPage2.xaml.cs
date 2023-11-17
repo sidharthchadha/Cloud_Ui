@@ -39,26 +39,27 @@ namespace ServerlessFuncUI
     {
         
         private readonly InsightsApi _insightsApi;
+        public static string InsightPath = "http://localhost:7074/api/insights";
         public string hostname;
         public InsightPage2(string hostname)
         {
             this.InitializeComponent();
-            _insightsApi = new InsightsApi("your_insights_route");
+            _insightsApi = new InsightsApi(InsightPath);
             this.hostname = hostname;
         }
 
         private async void OnGetFailedStudentsClick(object sender, RoutedEventArgs e)
         {
             // Assuming you have the hostname and testName from some input fields.
-            string hostname = "your_hostname";
-            string testName = "your_test_name";
+            
+            string testName = TestNameTextBox.Text;
 
             try
             {
                 var failedStudents = await _insightsApi.GetFailedStudentsGivenTest(hostname, testName);
 
                 // Assuming you want to display the results in a ListView.
-                failedStudentsListView.ItemsSource = failedStudents;
+                resultListBox.ItemsSource = failedStudents;
             }
             catch (Exception ex)
             {

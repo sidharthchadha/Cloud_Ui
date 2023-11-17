@@ -22,18 +22,21 @@ namespace ServerlessFuncUI
     public partial class InsightPage5 : Page
     {
         private readonly InsightsApi _insightsApi;
+        public static string InsightPath = "http://localhost:7074/api/insights";
+        public string hostname;
 
-        public InsightPage5()
+        public InsightPage5(string user_name)
         {
             InitializeComponent();
-            _insightsApi = new InsightsApi("your_insights_route"); // Replace with your actual insights route
+            this.hostname = user_name;
+            _insightsApi = new InsightsApi(InsightPath); 
         }
 
         private async void OnGetRunningAverageClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                string hostname = "your_hostname"; // Replace with your actual hostname
+                
                 List<double> averageList = await _insightsApi.RunningAverageAcrossSessoins(hostname);
 
                 // Clear existing items and add new average values to the ListView

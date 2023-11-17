@@ -39,10 +39,11 @@ namespace ServerlessFuncUI
     {
         private readonly InsightsApi _insightsApi;
         public string InsightPath = "http://localhost:7074/api/insights";
-
-        public InsightPage3()
+        public string hostname;
+        public InsightPage3(string host_name)
         {
             this.InitializeComponent();
+            this.hostname = hostname;
             _insightsApi = new InsightsApi(InsightPath);
         }
 
@@ -51,17 +52,17 @@ namespace ServerlessFuncUI
             try
             {
                 // Replace "your_hostname" and "your_test_name" with the actual values
-                string hostname = "your_hostname";
-                string testName = "your_test_name";
+               
+                string testName = TestNameTextBox.Text;
 
                 // Call the RunningAverageOnGivenTest method from InsightsApi
                 List<double> averageList = await _insightsApi.RunningAverageOnGivenTest(hostname, testName);
 
                 // Handle the results, update the TextBlock with the averages
-                resultTextBlock.Text = "Running Averages:\n";
+               // resultListBlock.Text = "Running Averages:\n";
                 foreach (double average in averageList)
                 {
-                    resultTextBlock.Text += $"{average}\n";
+                    resultListBox.Text += $"{average}\n";
                 }
             }
             catch (Exception ex)
@@ -69,7 +70,7 @@ namespace ServerlessFuncUI
                 // Handle exceptions (e.g., network errors, JSON parsing errors)
                 // You might want to display an error message to the user
                 // MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                resultTextBlock.Text = $"Error: {ex.Message}";
+                resultListBox.Text = $"Error: {ex.Message}";
             }
         }
     }
