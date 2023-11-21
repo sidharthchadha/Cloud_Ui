@@ -19,9 +19,9 @@ namespace Cloud_UX
     public class SessionsModel
     {
         string[] paths; //string array to store the read content of the url file. 
-        private string analysisUrl = "http://localhost:7074/api/analysis";
-        private string submissionUrl = "http://localhost:7074/api/submission";
-        private string sessionUrl = "http://localhost:7074/api/session";
+        private string analysisUrl = "https://serverlessfunc20231121082343.azurewebsites.net/api/analysis";
+        private string submissionUrl = "https://serverlessfunc20231121082343.azurewebsites.net/api/submission";
+        private string sessionUrl = "https://serverlessfunc20231121082343.azurewebsites.net/api/session";
         private DownloadApi fileDownloadApi;
         public SessionsModel()
         {

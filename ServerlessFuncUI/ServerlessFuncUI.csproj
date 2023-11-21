@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cloud_UX\Cloud_UX.csproj" />
+    <ProjectReference Include="..\ServerlessFunc\ServerlessFunc.csproj" />
   </ItemGroup>
 
 </Project>
