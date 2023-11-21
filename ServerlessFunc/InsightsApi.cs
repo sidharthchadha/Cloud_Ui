@@ -15,7 +15,7 @@ namespace ServerlessFunc
             _insightsRoute = insightsRoute;
         }
 
-        public async Task<List<Dictionary<string, int>>> CompareTwoSessoins(string sessionId1, string sessionId2)
+        public async Task<List<Dictionary<string, int>>> CompareTwoSessions(string sessionId1, string sessionId2)
         {
             var response = await _entityClient.GetAsync(_insightsRoute + $"/compare/{sessionId1}/{sessionId2}");
             response.EnsureSuccessStatusCode();
@@ -90,6 +90,45 @@ namespace ServerlessFunc
             };
             List<string> studentsList = JsonSerializer.Deserialize<List<string>>(result, options);
             return studentsList;
+        }
+
+        public async Task<Dictionary<string, int>> GetStudentScoreGivenSession(string sessionId)
+        {
+            var response = await _entityClient.GetAsync(_insightsRoute + $"/StudentScore/{sessionId}");
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            Dictionary<string,int> StudentScore = JsonSerializer.Deserialize<Dictionary<string,int>>(result, options);
+            return StudentScore;
+        }
+
+        public async Task<Dictionary<string, int>> GetTestScoreGivenSession(string sessionId)
+        {
+            var response = await _entityClient.GetAsync(_insightsRoute + $"/TestScore/{sessionId}");
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            Dictionary<string, int> TestScore = JsonSerializer.Deserialize<Dictionary<string, int>>(result, options);
+            return TestScore;
+        }
+
+        public async Task<List<string>> GetBestWorstGivenSession(string sessionId)
+        {
+            var response = await _entityClient.GetAsync(_insightsRoute + $"/BestWorst/{sessionId}");
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<string> bestworstresult = JsonSerializer.Deserialize<List<string>>(result, options);
+            return bestworstresult;
         }
     }
 }

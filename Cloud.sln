@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFuncUI", "Serverl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud_UX", "Cloud_UX\Cloud_UX.csproj", "{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFunc", "..\..\Cloud-master (3)\Cloud-master\ServerlessFunc\ServerlessFunc.csproj", "{C77F76DB-73F6-404D-8D64-4A821D4885BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerlessFunc", "ServerlessFunc\ServerlessFunc.csproj", "{48CFD6CB-6247-4B4E-B4D6-CFDBB0F39380}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,10 @@ Global
 		{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E91CE26-8CDF-4F9B-8B2E-87EAEF25F304}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C77F76DB-73F6-404D-8D64-4A821D4885BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48CFD6CB-6247-4B4E-B4D6-CFDBB0F39380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48CFD6CB-6247-4B4E-B4D6-CFDBB0F39380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48CFD6CB-6247-4B4E-B4D6-CFDBB0F39380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48CFD6CB-6247-4B4E-B4D6-CFDBB0F39380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

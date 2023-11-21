@@ -22,6 +22,7 @@ namespace ServerlessFunc
                 HostUserName = sessionData.HostUserName;
                 Tests = sessionData.Tests;
                 Students = sessionData.Students;
+                TestNameToID = sessionData.TestNameToID;
             }
 
             Timestamp = DateTime.Now;
@@ -82,6 +83,10 @@ namespace ServerlessFunc
         [JsonPropertyName("Students")]
         public byte[] Students { get; set; }
 
+        [JsonInclude]
+        [JsonPropertyName("TestNameToID")]
+        public byte[] TestNameToID { get; set; }
+
         [JsonIgnore]
         public ETag ETag { get; set; }
     }
@@ -95,6 +100,8 @@ namespace ServerlessFunc
 
         public byte[] Tests { get; set; }
         public byte[] Students { get; set; }
+
+        public byte[] TestNameToID { get; set; }
     }
 }
 

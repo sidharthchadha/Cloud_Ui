@@ -1,7 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=analysecloud;AccountKey=yJPvpPpyE35TsvOCxKqlHuRg7Co2eMKHWJn060WqQ1TCdEbv6ASJi/ggKGW+73tWhAvtCdJzD5Ua+AStIOyihQ==;EndpointSuffix=core.windows.net",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   },
   "Host": {

@@ -26,7 +26,7 @@ namespace ServerlessFunc
         private const string SessionRoute = "session";
         private const string SubmissionRoute = "submission";
         private const string DllContainerName = "dll";
-        private const string connectionString = "UseDevelopmentStorage=true";
+        private const string connectionString = "DefaultEndpointsProtocol=https;AccountName=analysecloud;AccountKey=yJPvpPpyE35TsvOCxKqlHuRg7Co2eMKHWJn060WqQ1TCdEbv6ASJi/ggKGW+73tWhAvtCdJzD5Ua+AStIOyihQ==;EndpointSuffix=core.windows.net";
         private const string AnalysisRoute = "analysis";
         private const string InsightsRoute = "insights";
 
@@ -193,32 +193,40 @@ namespace ServerlessFunc
             Dictionary<string, int> dictionary2 = new Dictionary<string, int>();
             foreach (AnalysisEntity analysisEntity in analysisEntities1)
             {
-                Dictionary<string, int> temp = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
-                foreach (KeyValuePair<string, int> pair in temp)
+                Dictionary<string, List<AnalyzerResult>> temp = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                foreach (var kvp in temp)
                 {
-                    if (dictionary1.ContainsKey(pair.Key))
+                    foreach (var analyzerResult in kvp.Value)
                     {
-                        dictionary1[pair.Key] += pair.Value;
+                        if (dictionary1.ContainsKey(analyzerResult.AnalyserID))
+                        {
+                            dictionary1[analyzerResult.AnalyserID] += analyzerResult.Verdict;
+                        }
+                        else
+                        {
+                            dictionary1[analyzerResult.AnalyserID] = analyzerResult.Verdict;
+                        }
                     }
-                    else
-                    {
-                        dictionary1[pair.Key] = pair.Value;
-                    }
+                    
                 }
             }
             foreach (AnalysisEntity analysisEntity in analysisEntities2)
             {
-                Dictionary<string, int> temp = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
-                foreach (KeyValuePair<string, int> pair in temp)
+                Dictionary<string, List<AnalyzerResult>> temp = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                foreach (var kvp in temp)
                 {
-                    if (dictionary2.ContainsKey(pair.Key))
+                    foreach (var analyzerResult in kvp.Value)
                     {
-                        dictionary2[pair.Key] += pair.Value;
+                        if (dictionary2.ContainsKey(analyzerResult.AnalyserID))
+                        {
+                            dictionary2[analyzerResult.AnalyserID] += analyzerResult.Verdict;
+                        }
+                        else
+                        {
+                            dictionary2[analyzerResult.AnalyserID] = analyzerResult.Verdict;
+                        }
                     }
-                    else
-                    {
-                        dictionary2[pair.Key] = pair.Value;
-                    }
+
                 }
             }
             List<Dictionary<string, int>> list = new List<Dictionary<string, int>>();
@@ -229,10 +237,10 @@ namespace ServerlessFunc
 
         [FunctionName("GetFailedStudentsGivenTest")]
         public static async Task<IActionResult> GetFailedStudentsGivenTest(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/failed/{hostname}/{testname}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/failed/{hostname}/{testid}")] HttpRequest req,
         [Table(SessionTableName, SessionEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient1,
         [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient2,
-        string hostname, string testname)
+        string hostname, string testid)
         {
             var page = await tableClient1.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{hostname}'").AsPages().FirstAsync();
             List<SessionEntity> sessionEntities = page.Values.ToList();
@@ -244,7 +252,7 @@ namespace ServerlessFunc
                     continue;
                 }
                 List<string> tests = InsightsUtility.ByteToList(sessionEntity.Tests);
-                if (!tests.Contains(testname))
+                if (!tests.Contains(testid))
                 {
                     continue;
                 }
@@ -252,8 +260,19 @@ namespace ServerlessFunc
                 List<AnalysisEntity> analysisEntities = page2.Values.ToList();
                 foreach (AnalysisEntity analysisEntity in analysisEntities)
                 {
-                    Dictionary<string, int> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
-                    if (dictionary[testname] == 0)
+                    Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                    int count = 0;
+                    foreach(var kvp in dictionary)
+                    {
+                        foreach (var analyzerResult in kvp.Value)
+                        {
+                            if(analyzerResult.AnalyserID == testid && analyzerResult.Verdict == 0)
+                            {
+                                count++;
+                            }
+                        }
+                    }
+                    if (count > 0 && !studentList.Contains(analysisEntity.UserName))
                     {
                         studentList.Add(analysisEntity.UserName);
                     }
@@ -263,10 +282,10 @@ namespace ServerlessFunc
         }
         [FunctionName("RunningAverageOnGivenTest")]
         public static async Task<IActionResult> RunningAverageOnGivenTest(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/testaverage/{hostname}/{testname}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/testaverage/{hostname}/{testid}")] HttpRequest req,
         [Table(SessionTableName, SessionEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient1,
         [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient2,
-        string hostname, string testname)
+        string hostname, string testid)
         {
             var page = await tableClient1.QueryAsync<SessionEntity>(filter: $"HostUserName eq '{hostname}'").AsPages().FirstAsync();
             List<SessionEntity> sessionEntities = page.Values.ToList();
@@ -279,7 +298,7 @@ namespace ServerlessFunc
                     continue;
                 }
                 List<string> tests = InsightsUtility.ByteToList(sessionEntity.Tests);
-                if (!tests.Contains(testname))
+                if (!tests.Contains(testid))
                 {
                     continue;
                 }
@@ -288,8 +307,19 @@ namespace ServerlessFunc
                 double sum = 0;
                 foreach (AnalysisEntity analysisEntity in analysisEntities)
                 {
-                    Dictionary<string, int> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
-                    sum += dictionary[testname];
+                    Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                    double localSum = 0;
+                    foreach(var kvp in dictionary)
+                    {
+                        foreach(var analyzerResult in kvp.Value)
+                        {
+                            if(analyzerResult.AnalyserID == testid)
+                            {
+                                localSum += analyzerResult.Verdict;
+                            }
+                        }
+                    }
+                    sum += localSum / (dictionary.Count);
                 }
                 if (analysisEntities.Count == 0)
                 {
@@ -323,11 +353,15 @@ namespace ServerlessFunc
                 int numberOfTests = 0;
                 foreach (AnalysisEntity analysisEntity in analysisEntities)
                 {
-                    Dictionary<string, int> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
-                    foreach (KeyValuePair<string, int> pair in dictionary)
+                    Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                    foreach (var kvp in dictionary)
                     {
-                        sum += pair.Value;
-                        numberOfTests++;
+                        foreach(var analyzerResult in kvp.Value)
+                        {
+                            sum += analyzerResult.Verdict;
+                            numberOfTests++;
+                        }
+                        
                     }
                 }
                 if (numberOfTests == 0)
@@ -362,11 +396,14 @@ namespace ServerlessFunc
                 int numberOfTests = 0;
                 foreach (AnalysisEntity analysisEntity in analysisEntities)
                 {
-                    Dictionary<string, int> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
-                    foreach (KeyValuePair<string, int> pair in dictionary)
+                    Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                    foreach (var kvp in dictionary)
                     {
-                        sum += pair.Value;
-                        numberOfTests++;
+                        foreach(var analyzerResult in kvp.Value)
+                        {
+                            sum += analyzerResult.Verdict;
+                            numberOfTests++;
+                        }
                     }
                 }
                 if (numberOfTests == 0)
@@ -383,7 +420,7 @@ namespace ServerlessFunc
         }
 
         [FunctionName("GetUsersWithoutAnalysisGivenSession")]
-        public static async Task<IActionResult> Run(
+        public static async Task<IActionResult> RunningUsersWithoutAnalysis(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/StudentsWithoutAnalysis/{sessionid}")] HttpRequest req,
         [Table(SessionTableName, SessionEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient1,
         [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient2,
@@ -403,52 +440,113 @@ namespace ServerlessFunc
             }
             return new OkObjectResult(students);
         }
-        /*[FunctionName("GetUsersbyTestname")]
-		public static async Task<IActionResult> Run(
-		[HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = AnalysisRoute + "/{sessionid}/{testname}")] HttpRequest req,
-		string sessionid,
-		string testname,
-		ILogger log)
-		{
-			try
-			{
-				BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-				BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(AnalysisContainerName);
 
-				List<string> results = new List<string>();
+        [FunctionName("GetBestWorstGivenSession")]
+        public static async Task<IActionResult> RunningBestWorst(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/BestWorst/{sessionid}")] HttpRequest req,
+        [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient1,
+        string sessionid,
+        ILogger log
+            )
+        {
+            var page = await tableClient1.QueryAsync<AnalysisEntity>(filter: $"SessionId eq '{sessionid}'").AsPages().FirstAsync();
+            List<AnalysisEntity> analysisEntities = page.Values.ToList();
+            List<string> result = new();
+            Dictionary<string, int> StudentScore = new();
+            Dictionary<string, int> TestScore = new();
+            foreach (AnalysisEntity analysisEntity in analysisEntities)
+            {
+                Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                foreach(var kvp in dictionary)
+                {
+                    foreach(var analyserResult in kvp.Value)
+                    {
+                        if (!StudentScore.ContainsKey(analysisEntity.UserName))
+                        {
+                            StudentScore[analysisEntity.UserName] = 0;
+                        }
+                        StudentScore[analysisEntity.UserName] += analyserResult.Verdict;
+                        if (!TestScore.ContainsKey(analyserResult.AnalyserID))
+                        {
+                            TestScore[analyserResult.AnalyserID] = 0;
+                        }
+                        TestScore[analyserResult.AnalyserID] += analyserResult.Verdict;
+                    }
+                }
+                
+            }
+            var studentWithHighestScore = StudentScore.Aggregate((x, y) => x.Value > y.Value ? x : y);
+            var studentWithLowestScore = StudentScore.Aggregate((x, y) => x.Value < y.Value ? x : y);
+            var testtWithHighestScore = TestScore.Aggregate((x, y) => x.Value > y.Value ? x : y);
+            var testtWithLowestScore = TestScore.Aggregate((x, y) => x.Value < y.Value ? x : y);
+            result.Add(studentWithHighestScore.Key);
+            result.Add(studentWithLowestScore.Key);
+            result.Add(testtWithHighestScore.Key);
+            result.Add(testtWithLowestScore.Key);
+            return new OkObjectResult(result);
+        }
 
-				await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
-				{
-					if (blobItem.Name.StartsWith(sessionid))
-					{
-						BlobClient blobClient = containerClient.GetBlobClient(blobItem.Name);
-						Response<BlobDownloadInfo> response = await blobClient.DownloadAsync();
-						BlobDownloadInfo blobInfo = response.Value;
+        [FunctionName("GetStudentScoreGivenSession")]
+        public static async Task<IActionResult> RunningStudentScore(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/StudentScore/{sessionid}")] HttpRequest req,
+        [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient1,
+        string sessionid,
+        ILogger log
+            )
+        {
+            var page = await tableClient1.QueryAsync<AnalysisEntity>(filter: $"SessionId eq '{sessionid}'").AsPages().FirstAsync();
+            List<AnalysisEntity> analysisEntities = page.Values.ToList();
+            List<string> result = new();
+            Dictionary<string, int> StudentScore = new();
+            foreach (AnalysisEntity analysisEntity in analysisEntities)
+            {
+                Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                foreach (var kvp in dictionary)
+                {
+                    foreach (var analyserResult in kvp.Value)
+                    {
+                        if (!StudentScore.ContainsKey(analysisEntity.UserName))
+                        {
+                            StudentScore[analysisEntity.UserName] = 0;
+                        }
+                        StudentScore[analysisEntity.UserName] += analyserResult.Verdict;
+                    }
+                }
 
-						using (MemoryStream memoryStream = new MemoryStream())
-						{
-							await blobInfo.Content.CopyToAsync(memoryStream);
-							string jsonContent = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
-							Dictionary<string, int> resultData = JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonContent);
+            }
+            return new OkObjectResult(StudentScore);
+        }
 
-							if (resultData.ContainsKey(testname) && resultData[testname] == 1)
-							{
-								results.Add(blobItem.Name);
-							}
-						}
-					}
-				}
+        [FunctionName("GetTestScoreGivenSession")]
+        public static async Task<IActionResult> RunningTestScore(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = InsightsRoute + "/TestScore/{sessionid}")] HttpRequest req,
+        [Table(AnalysisTableName, AnalysisEntity.PartitionKeyName, Connection = ConnectionName)] TableClient tableClient1,
+        string sessionid,
+        ILogger log
+            )
+        {
+            var page = await tableClient1.QueryAsync<AnalysisEntity>(filter: $"SessionId eq '{sessionid}'").AsPages().FirstAsync();
+            List<AnalysisEntity> analysisEntities = page.Values.ToList();
+            List<string> result = new();
+            Dictionary<string, int> TestScore = new();
+            foreach (AnalysisEntity analysisEntity in analysisEntities)
+            {
+                Dictionary<string, List<AnalyzerResult>> dictionary = InsightsUtility.ConvertAnalysisFileToDictionary(analysisEntity.AnalysisFile);
+                foreach (var kvp in dictionary)
+                {
+                    foreach (var analyserResult in kvp.Value)
+                    {
+                        if (!TestScore.ContainsKey(analyserResult.AnalyserID))
+                        {
+                            TestScore[analyserResult.AnalyserID] = 0;
+                        }
+                        TestScore[analyserResult.AnalyserID] += analyserResult.Verdict;
+                    }
+                }
 
-				return new OkObjectResult(results);
-			}
-			catch (Exception ex)
-			{
-				log.LogError(ex, "An error occurred while processing the request.");
-				return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-			}
-		}*/
-
-
+            }
+            return new OkObjectResult(TestScore);
+        }
 
 
     }

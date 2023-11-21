@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Cloud-master (3)\Cloud-master\ServerlessFunc\ServerlessFunc.csproj" />
     <ProjectReference Include="..\Cloud_UX\Cloud_UX.csproj" />
   </ItemGroup>
 
