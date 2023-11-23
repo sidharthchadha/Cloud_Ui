@@ -26,7 +26,7 @@ namespace ServerlessFuncUI
         public InsightPage6()
         {
             InitializeComponent();
-            _insightsApi = new InsightsApi("path");
+            _insightsApi = new InsightsApi("https://serverlessfunc20231121082343.azurewebsites.net/api/insights");
         }
 
         private async void OnGetStudentsWithoutAnalysis(object sender, RoutedEventArgs e)

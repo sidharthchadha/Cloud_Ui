@@ -54,7 +54,6 @@ namespace Cloud_UX
                             lock (this)
                             {
                                 this.ReceivedSessions = sessionsList;
-
                                 this.OnPropertyChanged("ReceivedSessions");
                             }
                         }),

@@ -44,6 +44,7 @@ namespace ServerlessFuncUI
         public InsightPage4 insight_page_4;
         public InsightPage5 insight_page_5;
         public InsightPage6 insight_page_6;
+
         public SessionsPage()
         {
             InitializeComponent();
@@ -61,12 +62,13 @@ namespace ServerlessFuncUI
             insight_page_6 = new InsightPage6();
 
 
-            Trace.WriteLine("Bargraph page created");
+            Trace.WriteLine("Insights page created");
             SubmissionsPage.Content = insight_page_1;
 
         }
+        
      
-        private readonly SessionsViewModel viewModel;
+        public SessionsViewModel viewModel;
 
         public IReadOnlyList<SessionEntity>? sessions;
 
@@ -131,9 +133,16 @@ namespace ServerlessFuncUI
 
         private void RefreshButtonClick(object sender, RoutedEventArgs e)
         {
-            Trace.WriteLine("[Cloud] Session Refresh Button pressed");
-            viewModel.GetSessions(UserName);
-            viewModel.PropertyChanged += Listener;
+            try
+            {
+                Trace.WriteLine("[Cloud] Session Refresh Button pressed");
+                viewModel.GetSessions(UserName);
+                
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("[Error] Exception in RefreshButtonClick: " + ex.Message);
+            }
         }
 
         private void RotateGraph(int add)

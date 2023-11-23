@@ -37,7 +37,7 @@ namespace ServerlessFuncUI
     /// </summary>
     public partial class InsightPage1 : Page
     {
-        public static string InsightPath = "http://localhost:7074/api/insights";
+        public static string InsightPath = "https://serverlessfunc20231121082343.azurewebsites.net/api/insights";
         public static InsightsApi cur_Insight;
 
         public InsightPage1()
@@ -55,7 +55,7 @@ namespace ServerlessFuncUI
             try
             {
                 // Call the CompareTwoSessions method
-                List<Dictionary<string, int>> result = await cur_Insight.CompareTwoSessoins(sessionId1, sessionId2);
+                List<Dictionary<string, int>> result = await cur_Insight.CompareTwoSessions(sessionId1, sessionId2);
 
                 // Display the result in the ListBox
                 DisplayResult(result);
